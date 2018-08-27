@@ -11,11 +11,10 @@ from pathlib import Path
 
 from ._output import cmd_end, cmd_start
 
-_KNOWN_EXECUTABLES = {}
+_KNOWN_EXECUTABLES: typing.Dict[str, Path] = {}
 
 
-def find_executable(executable: str, *paths: str) -> typing.Optional[Path]:  # noqa: C901
-    # noinspection SpellCheckingInspection
+def find_executable(executable: str, *paths: str) -> typing.Optional[Path]:
     """
     Based on: https://gist.github.com/4368898
 

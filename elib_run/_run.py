@@ -14,10 +14,9 @@ from ._output import cmd_end, cmd_start, error, info, std_err, std_out
 _DEFAULT_PROCESS_TIMEOUT = 60
 
 
-def filter_line(
-    line: str,
-    filters: typing.Optional[typing.Iterable[str]]
-) -> typing.Optional[str]:
+def filter_line(line: str,
+                filters: typing.Optional[typing.Iterable[str]]
+                ) -> typing.Optional[str]:
     """
     Filters out line that contain substring
 
@@ -76,12 +75,11 @@ def _parse_output_line(line: bytes, filters: typing.Optional[typing.Iterable[str
     return None
 
 
-def capture_output_from_running_process(
-    output_so_far: typing.List[str],
-    capture: sarge.Capture,
-    filters: typing.Optional[typing.Iterable[str]],
-    mute: bool
-):
+def capture_output_from_running_process(output_so_far: typing.List[str],
+                                        capture: sarge.Capture,
+                                        filters: typing.Optional[typing.Iterable[str]],
+                                        mute: bool
+                                        ):
     """
     Parses output from a running sub-process
 
@@ -102,15 +100,14 @@ def capture_output_from_running_process(
     return None
 
 
-def run(
-    cmd: str,
-    *paths: str,
-    cwd: str = '.',
-    mute: bool = False,
-    filters: typing.Optional[typing.Iterable[str]] = None,
-    failure_ok: bool = False,
-    timeout: float = _DEFAULT_PROCESS_TIMEOUT,
-) -> typing.Tuple[str, int]:
+def run(cmd: str,
+        *paths: str,
+        cwd: str = '.',
+        mute: bool = False,
+        filters: typing.Optional[typing.Iterable[str]] = None,
+        failure_ok: bool = False,
+        timeout: float = _DEFAULT_PROCESS_TIMEOUT,
+        ) -> typing.Tuple[str, int]:
     """
     Executes a command and returns the result
 
