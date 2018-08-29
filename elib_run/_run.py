@@ -2,39 +2,24 @@
 """
 Manages runners
 """
+import pathlib
+import shlex
 import sys
 import typing
+import time
 
 import sarge
 
-from ._exc import ExecutableNotFoundError
-from ._find_exe import find_executable
-from ._output import cmd_end, cmd_start, error, info, std_err, std_out
+from elib_run._exc import ExecutableNotFoundError
+from elib_run._find_exe import find_executable
+from elib_run._monitor_running_process import monitor_running_process
+from elib_run._output import error
+from elib_run._run_context import RunContext
 
-_DEFAULT_PROCESS_TIMEOUT = 60
-
-
-def filter_line(line: str,
-                filters: typing.Optional[typing.Iterable[str]]
-                ) -> typing.Optional[str]:
-    """
-    Filters out line that contain substring
-
-    Args:
-        line: line to filter
-        filters: filter strings to apply
-
-    Returns: line if not filter are found in line, else None
-
-    """
-    if filters is not None:
-        for filter_ in filters:
-            if filter_ in line:
-                return None
-    return line
+_DEFAULT_PROCESS_TIMEOUT = float(60)
 
 
-def check_error(return_code: int, mute: bool, exe_short: str, failure_ok: bool, output: typing.List[str]) -> int:
+def check_error(context: RunContext) -> int:
     """
     Runs after a sub-process exits
 
@@ -43,68 +28,64 @@ def check_error(return_code: int, mute: bool, exe_short: str, failure_ok: bool, 
         - if the process was muted ("mute" is True), the process output is printed anyway
         - if "failure_ok" is True (default), then a SystemExist exception is raised
 
-    :param return_code: sub-process return code
-    :param mute: mute the sub-process output
-    :param exe_short: short name of the sub-process
-    :param failure_ok: ignore failure
-    :param output: output of the sub-process
+    :param context: run context
+    :type context: _RunContext
+    :return: process return code
+    :rtype: int
     """
-    if return_code:
-        if mute:
-            cmd_end('')
-            process_output_as_str = '\n'.join(output)
-            std_err(f'{exe_short} error:\n{process_output_as_str}')
-        error(f'command failed: {exe_short} -> {return_code}')
-        if not failure_ok:
-            sys.exit(return_code)
+    context.result_buffer += context.cmd_as_string
+    if context.return_code != 0:
+        context.result_buffer += f' -> command failed: {context.return_code}'
+
+        if not context.failure_ok:
+            error(context.result_buffer)
+            error(repr(context))
+
+            if context.mute:
+                error(f'{context.exe_short_name} output:\n{context.process_output_as_str}')
+            sys.exit(context.return_code)
     else:
-        if mute:
-            cmd_end(f' -> {return_code}')
-        else:
-            info(f'{exe_short} -> {return_code}')
+        context.result_buffer += f' -> success: {context.return_code}'
 
-    return return_code
+    error(context.result_buffer)
+    return context.return_code
 
 
-def _parse_output_line(line: bytes, filters: typing.Optional[typing.Iterable[str]]):
-    line_str: str = line.decode('cp437')
-    filtered_line: typing.Optional[str] = filter_line(line_str, filters)
-    if filtered_line:
-        return filtered_line.rstrip()
+def _sanitize_filters(
+    filters: typing.Optional[typing.Union[typing.Iterable[str], str]]
+) -> typing.Optional[typing.Iterable[str]]:
+    if filters and isinstance(filters, str):
+        return [filters]
+    if filters:
+        if not hasattr(filters, '__iter__'):
+            raise TypeError(f'expected an iterable, got {type(filters)} instead')
+        for index, item in enumerate(filters):
+            if not isinstance(item, str):
+                raise TypeError(f'item at position {index} is not a string: {type(item)}')
+    return filters
 
-    return None
 
+def _parse_cmd(cmd: str, *paths: str) -> typing.Tuple[pathlib.Path, typing.List[str]]:
+    try:
+        exe_name, args = cmd.split(' ', maxsplit=1)
+    except ValueError:
+        # cmd has no argument
+        exe_name, args = cmd, ''
+    exe_path: pathlib.Path = find_executable(exe_name, *paths)
 
-def capture_output_from_running_process(output_so_far: typing.List[str],
-                                        capture: sarge.Capture,
-                                        filters: typing.Optional[typing.Iterable[str]],
-                                        mute: bool
-                                        ):
-    """
-    Parses output from a running sub-process
+    if not exe_path:
+        raise ExecutableNotFoundError(exe_name)
 
-    :param output_so_far: output gathered so far (the list will be updated in-place)
-    :param capture: sarge.Capture instance the output will be read from
-    :param filters: filter strings
-    :param mute: mute output
-    """
-    _output = capture.readline(block=False)
-    if _output:
-        line = _parse_output_line(_output, filters)
-        if line:
-            if not mute:
-                std_out(line)
-            output_so_far.append(line)
-        return capture_output_from_running_process(output_so_far, capture, filters, mute)
+    args_list = shlex.split(args)
 
-    return None
+    return exe_path, args_list
 
 
 def run(cmd: str,
         *paths: str,
         cwd: str = '.',
         mute: bool = False,
-        filters: typing.Optional[typing.Iterable[str]] = None,
+        filters: typing.Optional[typing.Union[typing.Iterable[str], str]] = None,
         failure_ok: bool = False,
         timeout: float = _DEFAULT_PROCESS_TIMEOUT,
         ) -> typing.Tuple[str, int]:
@@ -123,38 +104,63 @@ def run(cmd: str,
     Returns: command output
     """
 
-    if filters and isinstance(filters, str):
-        filters = [filters]
+    filters = _sanitize_filters(filters)
 
-    exe = find_executable(cmd.split(' ')[0], *paths)
-    if not exe:
-        raise ExecutableNotFoundError(cmd.split(' ')[0])
-    exe_short = exe.name
+    exe_path, args_list = _parse_cmd(cmd, *paths)
 
-    cmd = ' '.join([f'"{exe.absolute()}"'] + cmd.split(' ')[1:])
+    context = RunContext(
+        exe_path=exe_path,
+        capture=sarge.Capture(),
+        failure_ok=failure_ok,
+        mute=mute,
+        args_list=args_list,
+        paths=paths,
+        cwd=cwd,
+        timeout=timeout,
+        filters=filters,
+    )
 
     if mute:
-        cmd_start(f'RUNNING: {cmd}')
+        context.result_buffer += f'RUNNING: {context.cmd_as_string}'
     else:
-        info(f'RUNNING: {cmd}')
-    capture = sarge.Capture()
-    process = sarge.Command(cmd, stdout=capture, stderr=capture, shell=True, cwd=cwd)
-    process.run(async_=True)
+        error(f'RUNNING: {context.cmd_as_string}')
 
-    output: typing.List[str] = []
-    import time
-    start_time = time.monotonic()
-    while True:
-        capture_output_from_running_process(
-            output_so_far=output,
-            capture=capture,
-            filters=filters,
-            mute=mute,
-        )
-        if process.poll() is not None:
-            break
-        if time.monotonic() - start_time > timeout:
-            error(f'process timeout: {exe_short} ({timeout} seconds')
-            sys.exit(1)
-    check_error(process.returncode, mute, exe_short, failure_ok, output)
-    return '\n'.join(output), process.returncode
+    context.start_process()
+
+    monitor_running_process(context)
+
+    check_error(context)
+
+    return context.process_output_as_str, context.return_code
+
+
+if __name__ == '__main__':
+
+    import os
+
+    # t = os.system('chcp > text.text')
+    # print(t)
+    # exit(0)
+
+    from click import secho
+    from elib_run._output import register_hooks
+
+    def _error(msg):
+        secho(msg, err=True, fg='red')
+        # print('error', msg)
+
+    def _info(msg):
+        secho(msg, fg='green')
+        # print('info', msg)
+
+    def _process_output(msg):
+        secho(msg, fg='cyan')
+
+    # register_hook_error(_error)
+    # register_hook_info(_info)
+    # register_hook_process_output(_process_output)
+    register_hooks(_info, _error, _process_output)
+
+    # out, code = run('chcp', cwd=r'F:\DEV\elib_run', mute=True)
+    out, code = run('safety check', cwd=r'F:\DEV\elib_run')
+    # print(code, out)

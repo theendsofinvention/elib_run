@@ -13,29 +13,12 @@ def _add_hook(func_name: str, hook: typing.Callable):
     _HOOKS.setdefault(func_name, []).append(hook)
 
 
-def _run_hooks(func_name: str, msg: str):
-    for hook in _HOOKS[func_name]:
-        hook(msg)
-
-
-def cmd_start(msg: str):
-    """
-    Happens at the start of a command
-
-    :param msg: message to pass along
-    :type msg: str
-    """
-    _run_hooks('cmd_start', msg)
-
-
-def cmd_end(msg: str):
-    """
-    Happens at the end of a command
-
-    :param msg: message to pass along
-    :type msg: str
-    """
-    _run_hooks('cmd_end', msg)
+def _run_hooks(func_name: str, msg: str, force: bool = False):
+    if force and not _HOOKS[func_name]:
+        print(msg)
+    else:
+        for hook in _HOOKS[func_name]:
+            hook(msg)
 
 
 def info(msg: str):
@@ -52,87 +35,54 @@ def error(msg: str):
     """
     Error message
 
-    :param msg: message to pass along
-    :type msg: str
-    """
-    _run_hooks('error', msg)
-
-
-def std_out(msg: str):
-    """
-    Outputs a message to stdout
+    If no hook is defined for error messages, then they will be printed anyway
 
     :param msg: message to pass along
     :type msg: str
     """
-    _run_hooks('std_out', msg)
+    _run_hooks('error', msg, force=True)
 
 
-def std_err(msg: str):
+def print_process_output(msg: str):
     """
-    Outputs a message to stderr
+    Process output
+
+    If no hook is defined for error messages, then they will be printed anyway
 
     :param msg: message to pass along
     :type msg: str
     """
-    _run_hooks('std_err', msg)
+    _run_hooks('process_output', msg, force=True)
 
 
-def register_hook_cmd_start(hook: typing.Callable):
+def _single_hook_to_list(hook: typing.Optional[typing.Union[typing.Callable, typing.List[typing.Callable]]]
+                         ) -> typing.List[typing.Callable]:
+    if isinstance(hook, list):
+        return hook
+
+    return [hook]
+
+
+_HOOKS_ARG_TYPE = typing.Optional[typing.Union[typing.Callable, typing.List[typing.Callable]]]
+
+
+def register_hooks(info_hooks: _HOOKS_ARG_TYPE = None,
+                   error_hooks: _HOOKS_ARG_TYPE = None,
+                   process_output_hooks: _HOOKS_ARG_TYPE = None,
+                   ) -> None:
     """
-    Register a hook for cmd_start
+    Registers hooks for the elib_run package output
 
-    :param hook: function to call
-    :type hook: callable
+    :param info_hooks: function to call for regular output
+    :type info_hooks: typing.Optional[typing.Union[typing.Callable, typing.List[typing.Callable]]]
+    :param error_hooks: function to call for important output
+    :type error_hooks: typing.Optional[typing.Union[typing.Callable, typing.List[typing.Callable]]]
+    :param process_output_hooks: function to call for process output (stderr + stdout)
+    :type process_output_hooks: typing.Optional[typing.Union[typing.Callable, typing.List[typing.Callable]]]
     """
-    _add_hook('cmd_start', hook)
-
-
-def register_hook_cmd_end(hook: typing.Callable):
-    """
-    Register a hook for cmd_end
-
-    :param hook: function to call
-    :type hook: callable
-    """
-    _add_hook('cmd_end', hook)
-
-
-def register_hook_error(hook: typing.Callable):
-    """
-    Register a hook for error
-
-    :param hook: function to call
-    :type hook: callable
-    """
-    _add_hook('error', hook)
-
-
-def register_hook_info(hook: typing.Callable):
-    """
-    Register a hook for info
-
-    :param hook: function to call
-    :type hook: callable
-    """
-    _add_hook('info', hook)
-
-
-def register_hook_std_out(hook: typing.Callable):
-    """
-    Register a hook for std_out
-
-    :param hook: function to call
-    :type hook: callable
-    """
-    _add_hook('std_out', hook)
-
-
-def register_hook_std_err(hook: typing.Callable):
-    """
-    Register a hook for std_err
-
-    :param hook: function to call
-    :type hook: callable
-    """
-    _add_hook('std_err', hook)
+    for hook_name in ('info', 'error', 'process_output'):
+        local_ = locals()[hook_name + '_hooks']
+        if local_:
+            hook_list: list = _single_hook_to_list(local_)
+            for hook_callable in hook_list:
+                _add_hook(hook_name, hook_callable)

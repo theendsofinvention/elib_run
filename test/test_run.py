@@ -274,3 +274,15 @@ def test_process_timeout(sarge_proc):
     when(command).poll().thenReturn(None)
     with pytest.raises(SystemExit):
         _RUN_FUNC('some_random', timeout=0.1)
+
+
+def test_without_args():
+    out, code = _RUN_FUNC('echo')
+    assert code is 0
+    assert '' == out
+
+
+def test_with_args():
+    out, code = _RUN_FUNC('echo test')
+    assert code is 0
+    assert 'test' == out

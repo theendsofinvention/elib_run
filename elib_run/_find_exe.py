@@ -9,7 +9,7 @@ import sys
 import typing
 from pathlib import Path
 
-from ._output import cmd_end, cmd_start
+from ._output import error, info
 
 _KNOWN_EXECUTABLES: typing.Dict[str, Path] = {}
 
@@ -41,7 +41,7 @@ def find_executable(executable: str, *paths: str) -> typing.Optional[Path]:
     if executable in _KNOWN_EXECUTABLES:
         return _KNOWN_EXECUTABLES[executable]
 
-    cmd_start(f'Looking for executable: {executable}')
+    output = f'FIND_EXE: {executable}'
 
     if not paths:
         path = os.environ['PATH']
@@ -53,9 +53,9 @@ def find_executable(executable: str, *paths: str) -> typing.Optional[Path]:
             if executable_path.is_file():
                 break
         else:
-            cmd_end(f' -> not found')
+            error(output + ' -> not found')
             return None
 
     _KNOWN_EXECUTABLES[executable] = executable_path
-    cmd_end(f' -> {str(executable_path)}')
+    info(output + f' -> {str(executable_path)}')
     return executable_path

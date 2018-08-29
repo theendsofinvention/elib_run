@@ -7,10 +7,7 @@ from pkg_resources import DistributionNotFound, get_distribution
 
 from ._exc import ELIBRunError, ExecutableNotFoundError
 from ._find_exe import find_executable
-from ._output import (
-    register_hook_cmd_end, register_hook_cmd_start, register_hook_error, register_hook_info,
-    register_hook_std_err, register_hook_std_out,
-)
+from ._output import register_hooks
 from ._run import run
 
 try:
@@ -21,3 +18,6 @@ except DistributionNotFound:  # pragma: no cover
 
 __author__ = """etcher"""
 __email__ = 'etcher@daribouca.net'
+
+__all__ = ['run', 'register_hooks', 'find_executable',
+           'ELIBRunError', 'ExecutableNotFoundError']
