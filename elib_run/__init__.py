@@ -22,4 +22,4 @@ __author__ = """etcher"""
 __email__ = 'etcher@daribouca.net'
 
 __all__ = ['run', 'register_hooks', 'find_executable',
-           'ELIBRunError', 'ExecutableNotFoundError']
+           'ELIBRunError', 'ExecutableNotFoundError', 'register_console_hooks']
