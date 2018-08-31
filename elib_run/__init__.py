@@ -5,10 +5,12 @@ Top-level package for elib_run.
 
 from pkg_resources import DistributionNotFound, get_distribution
 
+# noinspection PyProtectedMember
+from elib_run._output._console_output import register_console_hooks, register_hooks
+# noinspection PyProtectedMember
+from elib_run._run._run import run
 from ._exc import ELIBRunError, ExecutableNotFoundError
 from ._find_exe import find_executable
-from elib_run._output._console_output import register_console_hooks
-from elib_run._run._run import run
 
 try:
     __version__ = get_distribution('elib_run').version

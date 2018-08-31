@@ -12,7 +12,7 @@ from mockito import (
 )
 
 # noinspection PyProtectedMember
-from elib_run._run import _run_context, _run
+from elib_run._run import _run, _run_context
 
 
 @pytest.fixture()

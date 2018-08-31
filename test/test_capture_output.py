@@ -57,6 +57,7 @@ def _dummy_context():
         }
     )
 
+
 def test_capture_simple():
     context = _dummy_context()
     when(context.capture).readline(block=False).thenReturn(b'random string').thenReturn(None)
