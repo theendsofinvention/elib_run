@@ -37,7 +37,7 @@ def dummy_kwargs() -> dict:
         ('failure_ok', ('string', 1, None, 1.1, ['list'], {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
         ('mute', ('string', 1, None, 1.1, ['list'], {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
         ('cwd', (1, None, True, False, 1.1, {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
-        ('timeout', (1, None, True, False, 'string', {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
+        ('timeout', (None, True, False, 'string', {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
         ('args_list', ('string', 1, 1.1, {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
         ('paths', ('string', 1, 1.1, {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
         ('filters', ('string', 1, 1.1, {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),

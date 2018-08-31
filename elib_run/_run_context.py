@@ -60,7 +60,7 @@ class RunContext:
             raise TypeError(f'expected a string, got "{type(self.cwd)}"')
 
     def _check_timeout(self):
-        if not isinstance(self.timeout, float):
+        if not isinstance(self.timeout, (float, int)) or isinstance(self.timeout, bool):
             raise TypeError(f'expected a float, got "{type(self.timeout)}"')
 
     def _check_filters(self):
