@@ -94,6 +94,7 @@ class RunContext:
         """
         Starts the process defined by this context
         """
+        setattr(self, '_started', True)
         self.start_time = time.monotonic()
         self.command.run(async_=True)
 
