@@ -4,7 +4,8 @@ import click
 import pytest
 from mockito import verify, when
 
-from elib_run import _console_output
+# noinspection PyProtectedMember
+from elib_run._output import _console_output
 
 
 @pytest.fixture(autouse=True)

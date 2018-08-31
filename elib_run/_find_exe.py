@@ -9,7 +9,8 @@ import sys
 import typing
 from pathlib import Path
 
-from ._output import error, info
+# noinspection PyProtectedMember
+from ._output._output import error, info
 
 _KNOWN_EXECUTABLES: typing.Dict[str, Path] = {}
 

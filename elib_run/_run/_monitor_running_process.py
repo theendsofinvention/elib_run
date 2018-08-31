@@ -3,10 +3,10 @@
 Runs an infinite loop that waits for the process to either exit on its or time out
 """
 
-
-from elib_run._capture_output import capture_output_from_running_process
+# noinspection PyProtectedMember
+from elib_run._output._capture_output import capture_output_from_running_process
 from elib_run._exc import ProcessTimeoutError
-from elib_run._run_context import RunContext
+from elib_run._run._run_context import RunContext
 
 
 def monitor_running_process(context: RunContext):

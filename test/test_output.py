@@ -5,7 +5,8 @@ from collections import defaultdict
 import pytest
 from mockito import mock, verifyNoMoreInteractions, verifyNoUnwantedInteractions, verifyStubbedInvocationsAreUsed, when
 
-from elib_run import _output
+# noinspection PyProtectedMember
+from elib_run._output import _output
 
 
 @pytest.fixture(autouse=True)

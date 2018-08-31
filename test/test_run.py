@@ -4,7 +4,8 @@
 import pytest
 from mockito import expect, mock, verify, verifyNoUnwantedInteractions, verifyStubbedInvocationsAreUsed, when
 
-from elib_run import _run
+# noinspection PyProtectedMember
+from elib_run._run import _run
 
 
 @pytest.mark.parametrize(

@@ -11,7 +11,8 @@ from mockito import (
     mock, verify, verifyNoUnwantedInteractions, verifyStubbedInvocationsAreUsed, verifyZeroInteractions, when,
 )
 
-from elib_run import _run, _run_context
+# noinspection PyProtectedMember
+from elib_run._run import _run_context, _run
 
 
 @pytest.fixture()

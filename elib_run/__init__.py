@@ -7,9 +7,8 @@ from pkg_resources import DistributionNotFound, get_distribution
 
 from ._exc import ELIBRunError, ExecutableNotFoundError
 from ._find_exe import find_executable
-from ._output import register_hooks
-from ._console_output import register_console_hooks
-from ._run import run
+from elib_run._output._console_output import register_console_hooks
+from elib_run._run._run import run
 
 try:
     __version__ = get_distribution('elib_run').version

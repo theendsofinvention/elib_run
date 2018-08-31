@@ -6,7 +6,8 @@ import pytest
 from hypothesis import given, strategies as st
 from mockito import mock, verify, verifyNoUnwantedInteractions, verifyStubbedInvocationsAreUsed, when
 
-from elib_run import _capture_output
+# noinspection PyProtectedMember
+from elib_run._output import _capture_output
 
 
 @given(text=st.text(alphabet=string.printable))

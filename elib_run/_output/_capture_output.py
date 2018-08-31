@@ -5,8 +5,9 @@ Responsible for reading and parsing output from a running sub-process
 import re
 import typing
 
-from elib_run._output import process_output
-from elib_run._run_context import RunContext
+from elib_run._output._output import process_output
+# noinspection PyProtectedMember
+from elib_run._run._run_context import RunContext
 
 
 def filter_line(line: str, context: RunContext) -> typing.Optional[str]:

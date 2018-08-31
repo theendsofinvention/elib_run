@@ -3,7 +3,8 @@
 import pytest
 from mockito import mock, verify, when
 
-from elib_run import _monitor_running_process
+# noinspection PyProtectedMember
+from elib_run._run import _monitor_running_process
 
 
 def test_monitor_running_process_poll():
