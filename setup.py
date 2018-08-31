@@ -6,6 +6,7 @@ from setuptools import find_packages, setup
 
 requirements = [
     'sarge',
+    'dataclasses',
 ]
 test_requirements = [
     'epab',
