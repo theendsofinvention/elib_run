@@ -8,7 +8,7 @@ sarge = "*"
 dataclasses = "*"
 
 [dev-packages]
-epab = "*"
+epab = {editable = true, git = "https://github.com/etcher-be/epab.git", ref="master"}
 
 [requires]
 python_version = "3.6"

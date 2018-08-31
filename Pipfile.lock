@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "de83537f275452ceeaa1d89a4d174301d2f528eccd4706161b2d1f4999a9a054"
+            "sha256": "be4a0535faa87d630f58db3e0c86d1907bcbbb39af2b6cabe3953ba57e1f6116"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -170,11 +170,9 @@
             "version": "==2018.8.27.4"
         },
         "epab": {
-            "hashes": [
-                "sha256:7c6e66138e505ce00a1fd7d161a1062bab7646cd4841269116f99f18ff4e1302"
-            ],
-            "index": "pypi",
-            "version": "==2018.8.31.1"
+            "editable": true,
+            "git": "https://github.com/etcher-be/epab.git",
+            "ref": "df7321074e4f444f40a958d115b31b42a19ce61c"
         },
         "execnet": {
             "hashes": [
@@ -658,7 +656,7 @@
                 "sha256:f17495e6fe3d377e3faac68121caef6f974fcb9e046bc075bcff40d8e5cc69a4",
                 "sha256:f85900b9cca0c67767bb61b2b9bd53208aaa7373dae633dbe25d179b4bf38aa7"
             ],
-            "markers": "python_version >= '3.4.1'",
+            "markers": "python_version >= '3.4'",
             "version": "==1.2.6"
         }
     }
