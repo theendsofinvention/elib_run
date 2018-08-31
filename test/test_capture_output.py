@@ -45,8 +45,8 @@ def test_decode_and_filter_filtered():
     assert result is None
 
 
-def test_capture_simple():
-    context = mock(
+def _dummy_context():
+    return mock(
         {
             'capture': mock(),
             'filters': None,
@@ -55,6 +55,9 @@ def test_capture_simple():
             'console_encoding': 'utf8',
         }
     )
+
+def test_capture_simple():
+    context = _dummy_context()
     when(context.capture).readline(block=False).thenReturn(b'random string').thenReturn(None)
     when(_capture_output).process_output('random string')
     _capture_output.capture_output_from_running_process(context)
@@ -64,15 +67,8 @@ def test_capture_simple():
 
 
 def test_capture_filtered():
-    context = mock(
-        {
-            'capture': mock(),
-            'filters': ['random.*'],
-            'mute': False,
-            'process_output_chunks': [],
-            'console_encoding': 'utf8',
-        }
-    )
+    context = _dummy_context()
+    context.filters = ['random.*']
     when(context.capture).readline(block=False).thenReturn(b'random string').thenReturn(None)
     when(_capture_output).process_output(...)
     _capture_output.capture_output_from_running_process(context)
@@ -83,15 +79,8 @@ def test_capture_filtered():
 
 
 def test_capture_muted():
-    context = mock(
-        {
-            'capture': mock(),
-            'filters': None,
-            'mute': True,
-            'process_output_chunks': [],
-            'console_encoding': 'utf8',
-        }
-    )
+    context = _dummy_context()
+    context.mute = True
     when(context.capture).readline(block=False).thenReturn(b'random string').thenReturn(None)
     when(_capture_output).process_output(...)
     _capture_output.capture_output_from_running_process(context)
