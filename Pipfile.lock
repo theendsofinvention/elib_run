@@ -57,11 +57,11 @@
         },
         "atomicwrites": {
             "hashes": [
-                "sha256:6b5282987b21cd79151f51caccead7a09d0a32e89c568bd9e3c4aaa7bbdf3f3a",
-                "sha256:e16334d50fe0f90919ef7339c24b9b62e6abaa78cd2d226f3d94eb067eb89043"
+                "sha256:0312ad34fcad8fac3704d441f7b317e50af620823353ec657a53e981f92920c0",
+                "sha256:ec9ae8adaae229e4f8446952d204a3e4b5fdd2d099f9be3aaf556120135fb3ee"
             ],
-            "markers": "python_version != '3.1.*' and python_version != '3.0.*' and python_version != '3.2.*' and python_version >= '2.7' and python_version != '3.3.*'",
-            "version": "==1.2.0"
+            "markers": "python_version != '3.3.*' and python_version != '3.0.*' and python_version >= '2.7' and python_version != '3.2.*' and python_version != '3.1.*'",
+            "version": "==1.2.1"
         },
         "attrs": {
             "hashes": [
@@ -227,11 +227,11 @@
         },
         "hypothesis": {
             "hashes": [
-                "sha256:82ed8feb36d7ae7f08e5d0f2df7c52e202bd9dc4e4d34869aa9ae9e888dcf9b2",
-                "sha256:f8cf821ad619bbd8d497feb3e437448e32261b76555aceedefee234c274b8db6"
+                "sha256:b304be9a43125936ab56af81ad014bb5b8ad19526f49d6919bbd344e924f0f81",
+                "sha256:b5f5023e486df972a497942a6de624c150fa186adca8a4d7eca6f02b27e654be",
+                "sha256:e01ffab98a0f0a13223ff8726506675bbee415c26e535f1b3dec7884c58e1106"
             ],
-            "markers": "python_version >= '2.6' and python_version != '3.1.*' and python_version != '3.0.*' and python_version < '4' and python_version != '3.2.*'",
-            "version": "==3.69.11"
+            "version": "==3.69.12"
         },
         "idna": {
             "hashes": [
@@ -409,11 +409,11 @@
         },
         "pytest": {
             "hashes": [
-                "sha256:2e7c330338b2732ddb992217962e3454aa7290434e75329b1a6739cea41bea6b",
-                "sha256:4abcd98faeea3eb95bd05aa6a7b121d5f89d72e4d36ddb0dcbbfd1ec9f3651d1"
+                "sha256:2d7c49e931316cc7d1638a3e5f54f5d7b4e5225972b3c9838f3584788d27f349",
+                "sha256:ad0c7db7b5d4081631e0155f5c61b80ad76ce148551aaafe3a718d65a7508b18"
             ],
-            "markers": "python_version != '3.1.*' and python_version != '3.0.*' and python_version != '3.2.*' and python_version >= '2.7' and python_version != '3.3.*'",
-            "version": "==3.7.3"
+            "markers": "python_version != '3.3.*' and python_version != '3.0.*' and python_version >= '2.7' and python_version != '3.2.*' and python_version != '3.1.*'",
+            "version": "==3.7.4"
         },
         "pytest-cache": {
             "hashes": [

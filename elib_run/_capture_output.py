@@ -1,10 +1,11 @@
 # coding=utf-8
+"""
+Responsible for reading and parsing output from a running sub-process
+"""
 import re
-import sys
 import typing
-import subprocess
 
-from elib_run._output import print_process_output
+from elib_run._output import process_output
 from elib_run._run_context import RunContext
 
 
@@ -69,7 +70,7 @@ def capture_output_from_running_process(context: RunContext) -> None:
             if not context.mute:
 
                 # Print in real time
-                print_process_output(line)
+                process_output(line)
 
             # Buffer the line
             context.process_output_chunks.append(line)
