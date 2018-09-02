@@ -46,11 +46,20 @@ def _global_tear_down(tmpdir, monkeypatch):
         monkeypatch.delenv('APPVEYOR')
     except KeyError:
         pass
-    os_env = dict(os.environ)
     current_dir = os.getcwd()
     folder = Path(tmpdir).absolute()
     os.chdir(folder)
     yield
     unstub()
     os.chdir(current_dir)
-    os.environ = os_env
+
+
+@pytest.fixture(autouse=True)
+def _clean_os_env():
+    env = os.environ.copy()
+    yield
+    for key, value in env.items():
+        os.environ[key] = value
+    for key in os.environ.keys():
+        if key not in env.keys():
+            del os.environ[key]
