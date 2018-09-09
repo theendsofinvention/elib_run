@@ -7,7 +7,7 @@ from hypothesis import given, strategies as st
 from mockito import mock, verify, verifyNoUnwantedInteractions, verifyStubbedInvocationsAreUsed, when
 
 # noinspection PyProtectedMember
-from elib_run._output import _capture_output
+from elib_run._run import _capture_output
 
 
 @given(text=st.text(alphabet=string.printable))
@@ -54,27 +54,29 @@ def _dummy_context():
             'mute': False,
             'process_output_chunks': [],
             'console_encoding': 'utf8',
+            'process_logger': mock(),
         }
     )
 
 
-def test_capture_simple():
+def test_capture_simple(caplog):
+    caplog.set_level(10, 'elib_run.process')
     context = _dummy_context()
     when(context.capture).readline(block=False).thenReturn(b'random string').thenReturn(None)
-    when(_capture_output).process_output('random string')
     _capture_output.capture_output_from_running_process(context)
     verifyNoUnwantedInteractions()
     verifyStubbedInvocationsAreUsed()
     assert ['random string'] == context.process_output_chunks
+    assert 'random string' in caplog.text
 
 
 def test_capture_filtered():
     context = _dummy_context()
     context.filters = ['random.*']
     when(context.capture).readline(block=False).thenReturn(b'random string').thenReturn(None)
-    when(_capture_output).process_output(...)
+    when(context.process_logger).debug(...)
     _capture_output.capture_output_from_running_process(context)
-    verify(_capture_output, times=0).process_output(...)
+    verify(context.process_logger, times=0).debug(...)
     verifyNoUnwantedInteractions()
     verifyStubbedInvocationsAreUsed()
     assert [] == context.process_output_chunks
@@ -84,9 +86,9 @@ def test_capture_muted():
     context = _dummy_context()
     context.mute = True
     when(context.capture).readline(block=False).thenReturn(b'random string').thenReturn(None)
-    when(_capture_output).process_output(...)
+    when(context.process_logger).debug(...)
     _capture_output.capture_output_from_running_process(context)
-    verify(_capture_output, times=0).process_output(...)
+    verify(context.process_logger, times=0).debug(...)
     verifyNoUnwantedInteractions()
     verifyStubbedInvocationsAreUsed()
     assert ['random string'] == context.process_output_chunks

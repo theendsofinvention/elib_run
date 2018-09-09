@@ -2,6 +2,7 @@
 """
 Manages runners
 """
+import logging
 import pathlib
 import shlex
 import sys
@@ -11,17 +12,16 @@ import sarge
 
 from elib_run._exc import ExecutableNotFoundError
 from elib_run._find_exe import find_executable
-# noinspection PyProtectedMember
-from elib_run._output._output import error, info, process_output, success
 from elib_run._run._monitor_running_process import monitor_running_process
 from elib_run._run._run_context import RunContext
 
 _DEFAULT_PROCESS_TIMEOUT = float(60)
+_LOGGER_PROCESS = logging.getLogger('elib_run.process')
 
 
 def _exit(context: RunContext):
     if context.mute:
-        process_output(f'{context.process_output_as_str}')
+        _LOGGER_PROCESS.error('process output:\n%s', context.process_output_as_str)
     sys.exit(context.return_code)
 
 
@@ -46,8 +46,8 @@ def check_error(context: RunContext) -> int:
         else:
             context.result_buffer += f'{context.cmd_as_string}: command failed: {context.return_code}'
 
-        error(context.result_buffer)
-        error(repr(context))
+        _LOGGER_PROCESS.error(context.result_buffer)
+        _LOGGER_PROCESS.error(repr(context))
 
         if not context.failure_ok:
             _exit(context)
@@ -56,7 +56,7 @@ def check_error(context: RunContext) -> int:
             context.result_buffer += f': success: {context.return_code}'
         else:
             context.result_buffer += f'{context.cmd_as_string}: success: {context.return_code}'
-        success(context.result_buffer)
+        _LOGGER_PROCESS.info(context.result_buffer)
 
     return context.return_code
 
@@ -132,7 +132,7 @@ def run(cmd: str,
     if mute:
         context.result_buffer += f'{context.cmd_as_string}'
     else:
-        info(f'{context.cmd_as_string}: running')
+        _LOGGER_PROCESS.info(f'{context.cmd_as_string}: running')
 
     context.start_process()
     monitor_running_process(context)

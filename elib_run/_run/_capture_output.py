@@ -2,12 +2,14 @@
 """
 Responsible for reading and parsing output from a running sub-process
 """
+import logging
 import re
 import typing
 
-from elib_run._output._output import process_output
 # noinspection PyProtectedMember
 from elib_run._run._run_context import RunContext
+
+_LOGGER_PROCESS = logging.getLogger('elib_run.process')
 
 
 def filter_line(line: str, context: RunContext) -> typing.Optional[str]:
@@ -71,7 +73,7 @@ def capture_output_from_running_process(context: RunContext) -> None:
             if not context.mute:
 
                 # Print in real time
-                process_output(line)
+                _LOGGER_PROCESS.debug(line)
 
             # Buffer the line
             context.process_output_chunks.append(line)
