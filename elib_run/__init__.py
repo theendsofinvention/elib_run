@@ -20,3 +20,9 @@ __author__ = """etcher"""
 __email__ = 'etcher@daribouca.net'
 
 __all__ = ['run', 'find_executable', 'ELIBRunError', 'ExecutableNotFoundError']
+
+
+# pylint: disable=unused-argument,missing-docstring
+def register_console_hooks(*args, **kwargs):  # pragma: no cover
+    import warnings
+    warnings.warn('console hooks registration are not supported anymore', PendingDeprecationWarning)
