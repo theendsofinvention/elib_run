@@ -4,15 +4,15 @@
 Finds an executable on the system
 """
 
+import logging
 import os
 import sys
 import typing
 from pathlib import Path
 
-# noinspection PyProtectedMember
-from ._output._output import error, info
-
 _KNOWN_EXECUTABLES: typing.Dict[str, Path] = {}
+
+_LOGGER = logging.getLogger('elib_run')
 
 
 def find_executable(executable: str, *paths: str) -> typing.Optional[Path]:
@@ -42,7 +42,7 @@ def find_executable(executable: str, *paths: str) -> typing.Optional[Path]:
     if executable in _KNOWN_EXECUTABLES:
         return _KNOWN_EXECUTABLES[executable]
 
-    output = f'FIND_EXE: {executable}'
+    output = f'{executable}'
 
     if not paths:
         path = os.environ['PATH']
@@ -54,9 +54,9 @@ def find_executable(executable: str, *paths: str) -> typing.Optional[Path]:
             if executable_path.is_file():
                 break
         else:
-            error(output + ' -> not found')
+            _LOGGER.error('%s -> not found', output)
             return None
 
     _KNOWN_EXECUTABLES[executable] = executable_path
-    info(output + f' -> {str(executable_path)}')
+    _LOGGER.info('%s -> %s', output, str(executable_path))
     return executable_path

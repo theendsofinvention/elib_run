@@ -12,36 +12,37 @@ from elib_run._run import _run
     'mute',
     [True, False]
 )
-def test_exit(mute):
+def test_exit(mute, caplog):
+    caplog.set_level(10, 'elib_run.process')
     context = mock(
         {
             'mute': mute,
-            'process_output_as_str': 'dummy_output'
+            'process_output_as_str': 'dummy_output',
+            'process_logger': mock(),
         }
     )
-    when(_run).process_output(...)
+    when(context.process_logger).debug(...)
     with pytest.raises(SystemExit):
         _run._exit(context)
     if mute:
-        verify(_run).process_output('dummy_output')
+        assert 'dummy_output' in caplog.text
     else:
-        verify(_run, times=0).process_output()
+        assert '' == caplog.text
 
 
 @pytest.mark.parametrize('return_code', (0, 1))
 @pytest.mark.parametrize('mute', (True, False))
 @pytest.mark.parametrize('failure_ok', (True, False))
-def test_check_error(return_code, mute, failure_ok):
-    when(_run).success(...)
-    when(_run).error(...)
+def test_check_error(return_code, mute, failure_ok, caplog):
+    caplog.set_level(10)
     context = mock(
         {
             'return_code': return_code,
             'mute': mute,
             'result_buffer': '',
             'failure_ok': failure_ok,
-            'cmd_as_string': 'dummy_cmd'
-
+            'cmd_as_string': 'dummy_cmd',
+            'process_logger': mock(),
         }
     )
     when(_run)._exit(context)
@@ -51,15 +52,15 @@ def test_check_error(return_code, mute, failure_ok):
             expected_buffer = f': success: {return_code}'
         else:
             expected_buffer = f'{context.cmd_as_string}: success: {context.return_code}'
-        verify(_run).success(expected_buffer)
+        assert expected_buffer in caplog.text
         assert result is 0
     else:
         if mute:
             expected_buffer = f': command failed: {context.return_code}'
         else:
             expected_buffer = f'{context.cmd_as_string}: command failed: {context.return_code}'
-        verify(_run).error(expected_buffer)
-        verify(_run).error(repr(context))
+        assert expected_buffer in caplog.text
+        assert repr(context) in caplog.text
         if not failure_ok:
             verify(_run)._exit(context)
         else:
@@ -114,11 +115,8 @@ def test_parse_cmd_exe_not_found():
     'mute', (True, False)
 )
 def test_run(mute):
-    if not mute:
-        expect(_run).info(...)
     expect(_run.RunContext).start_process()
     expect(_run).monitor_running_process(...)
     expect(_run).check_error(...)
-    when(_run).info(...)
     _run.run('cmd', mute=mute)
     verifyNoUnwantedInteractions()
