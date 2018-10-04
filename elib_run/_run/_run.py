@@ -3,6 +3,7 @@
 Manages runners
 """
 import logging
+import warnings
 import pathlib
 import shlex
 import sys
@@ -74,13 +75,13 @@ def _sanitize_filters(filters: typing.Optional[typing.Union[typing.Iterable[str]
     return filters
 
 
-def _parse_cmd(cmd: str, *paths: str) -> typing.Tuple[pathlib.Path, typing.List[str]]:
+def _parse_cmd(cmd: str) -> typing.Tuple[pathlib.Path, typing.List[str]]:
     try:
         exe_name, args = cmd.split(' ', maxsplit=1)
     except ValueError:
         # cmd has no argument
         exe_name, args = cmd, ''
-    exe_path: typing.Optional[pathlib.Path] = find_executable(exe_name, *paths)
+    exe_path: typing.Optional[pathlib.Path] = find_executable(exe_name)
 
     if not exe_path:
         raise ExecutableNotFoundError(exe_name)
@@ -103,7 +104,7 @@ def run(cmd: str,
 
     Args:
         cmd: command to execute
-        paths: paths to search executable in
+        paths: deprecated
         cwd: working directory (defaults to ".")
         mute: if true, output will not be printed
         filters: gives a list of partial strings to filter out from the output (stdout or stderr)
@@ -113,9 +114,12 @@ def run(cmd: str,
     Returns: command output
     """
 
+    if paths:
+        warnings.warn(DeprecationWarning('"paths" has been deprecated'))
+
     filters = _sanitize_filters(filters)
 
-    exe_path, args_list = _parse_cmd(cmd, *paths)
+    exe_path, args_list = _parse_cmd(cmd)
 
     context = RunContext(  # type: ignore
         exe_path=exe_path,
@@ -123,7 +127,6 @@ def run(cmd: str,
         failure_ok=failure_ok,
         mute=mute,
         args_list=args_list,
-        paths=paths,
         cwd=cwd,
         timeout=timeout,
         filters=filters,
