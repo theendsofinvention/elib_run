@@ -135,7 +135,7 @@ def run(cmd: str,
     if mute:
         context.result_buffer += f'{context.cmd_as_string}'
     else:
-        _LOGGER_PROCESS.info(f'{context.cmd_as_string}: running')
+        _LOGGER_PROCESS.info('%s: running', context.cmd_as_string)
 
     context.start_process()
     monitor_running_process(context)
