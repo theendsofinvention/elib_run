@@ -2,6 +2,7 @@
 
 
 import pytest
+from pathlib import Path
 from mockito import expect, mock, verify, verifyNoUnwantedInteractions, verifyStubbedInvocationsAreUsed, when
 
 # noinspection PyProtectedMember
@@ -120,3 +121,15 @@ def test_run(mute):
     expect(_run).check_error(...)
     _run.run('cmd', mute=mute)
     verifyNoUnwantedInteractions()
+
+
+def test_path_deprecation():
+    expect(_run.RunContext).start_process()
+    expect(_run).monitor_running_process(...)
+    expect(_run).check_error(...)
+    when(_run).find_executable(...).thenReturn(Path('dummy'))
+    with pytest.deprecated_call():
+        _run.run('dummy', 'some', 'paths')
+    with pytest.warns(None) as record:
+        _run.run('dummy')
+        assert len(record) == 0
