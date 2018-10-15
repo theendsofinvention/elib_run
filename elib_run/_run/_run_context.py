@@ -21,6 +21,7 @@ class RunContext:
     failure_ok: bool
     mute: bool
     args_list: typing.List[str]
+    paths: typing.Optional[typing.Iterable[str]]
     cwd: str
     timeout: float
     process_output_chunks: typing.List[str] = dataclasses.field(default_factory=list, repr=False)
@@ -45,6 +46,14 @@ class RunContext:
     def _check_failure_ok(self):
         if not isinstance(self.failure_ok, bool):
             raise TypeError(f'expected a bool, got "{type(self.failure_ok)}"')
+
+    def _check_paths(self):
+        if self.paths:
+            if not isinstance(self.paths, list):
+                raise TypeError(f'expected a list, got "{type(self.paths)}"')
+            for index, path in enumerate(self.paths):
+                if not isinstance(path, str):
+                    raise TypeError(f'expected a string, got "{type(path)}" at index {index}')
 
     def _check_cwd(self):
         if not isinstance(self.cwd, str):
@@ -75,6 +84,7 @@ class RunContext:
         self._check_exe_path()
         self._check_mute()
         self._check_failure_ok()
+        self._check_paths()
         self._check_cwd()
         self._check_timeout()
         self._check_filters()

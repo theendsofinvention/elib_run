@@ -13,7 +13,7 @@ from elib_run import _find_exe
 def test_find_executable():
     python = _find_exe.find_executable('python')
     assert _find_exe.find_executable('python.exe') == python
-    assert _find_exe.find_executable('python') == python
+    assert _find_exe.find_executable('python', f'{sys.prefix}/Scripts') == python
     assert _find_exe.find_executable('__sure__not__') is None
 
 
@@ -22,6 +22,14 @@ def test_context():
     assert _find_exe.find_executable('__sure__not__') is None
     _find_exe._KNOWN_EXECUTABLES['__sure__not__.exe'] = 'ok'
     assert _find_exe.find_executable('__sure__not__') == 'ok'
+
+
+@pytest.mark.filterwarnings('ignore::UserWarning')
+def test_paths():
+    assert _find_exe.find_executable('python')
+    assert _find_exe.find_executable('python', '.')
+    _find_exe._KNOWN_EXECUTABLES = {}
+    assert _find_exe.find_executable('python', '.') is None
 
 
 @pytest.mark.filterwarnings('ignore::UserWarning')
