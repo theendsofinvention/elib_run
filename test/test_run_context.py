@@ -23,6 +23,7 @@ def dummy_kwargs() -> dict:
         failure_ok=True,
         mute=True,
         args_list=['some', 'args'],
+        paths=['.'],
         cwd='.',
         timeout=10.0,
         filters=['some', 'string'],
@@ -39,6 +40,7 @@ def dummy_kwargs() -> dict:
         ('cwd', (1, None, True, False, 1.1, {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
         ('timeout', (None, True, False, 'string', {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
         ('args_list', ('string', 1, 1.1, {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
+        ('paths', ('string', 1, 1.1, {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
         ('filters', ('string', 1, 1.1, {'k': 'v'}, pathlib.Path('.'), sarge.Capture())),
     )
 )
@@ -74,7 +76,7 @@ def test_wrong_init_lists_of_string(arg_name, wrong_value, dummy_kwargs):
 
 @pytest.mark.parametrize(
     'optional_arg_name',
-    (None, 'args_list', 'filters')
+    (None, 'args_list', 'filters', 'paths')
 )
 def test_valid_init(dummy_kwargs, optional_arg_name):
     correct_kwargs = dummy_kwargs.copy()
