@@ -130,6 +130,7 @@ def run(cmd: str,
     )
 
     if mute:
+        _LOGGER_PROCESS.info('%s: starting muted run', context.cmd_as_string)
         context.result_buffer += f'{context.cmd_as_string}'
     else:
         _LOGGER_PROCESS.info('%s: running', context.cmd_as_string)
