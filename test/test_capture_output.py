@@ -92,3 +92,11 @@ def test_capture_muted():
     verifyNoUnwantedInteractions()
     verifyStubbedInvocationsAreUsed()
     assert ['random string'] == context.process_output_chunks
+
+
+def test_capture_error():
+    context = _dummy_context()
+    test_str = '"éà$ùµ'
+    in_bytes = test_str.encode('utf16')
+    output = _capture_output.decode_and_filter(in_bytes, context)
+    assert output != test_str

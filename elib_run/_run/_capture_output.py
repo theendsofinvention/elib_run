@@ -43,7 +43,7 @@ def decode_and_filter(line: bytes, context: RunContext) -> typing.Optional[str]:
     :return: optional line
     :rtype: str
     """
-    line_str: str = line.decode(context.console_encoding)
+    line_str: str = line.decode(context.console_encoding, errors='replace')
     filtered_line: typing.Optional[str] = filter_line(line_str, context)
     if filtered_line:
         return filtered_line.rstrip()
