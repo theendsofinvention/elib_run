@@ -108,7 +108,6 @@
                 "sha256:05eed71e2e327246ad6b38c540c4a3117230b19679b875190486ddd2d721422d",
                 "sha256:f8ac84de7840f5b9c4e3347b3c1eaa50f7e49c2b07596221daec5edaabbd7c48"
             ],
-            "markers": "sys_platform == 'win32'",
             "version": "==0.4.1"
         },
         "coverage": {
@@ -184,9 +183,9 @@
         },
         "elib-run": {
             "hashes": [
-                "sha256:3256412f8d77f259ad367dc0481e83bbf75c0840dfd167b641801539a46904ee"
+                "sha256:4090098e7faf8c5c1aaaa4a04f77bf51551e876b713152450c448ee46b291bf2"
             ],
-            "version": "==2018.10.26.1"
+            "version": "==2018.12.6.1"
         },
         "epab": {
             "hashes": [
