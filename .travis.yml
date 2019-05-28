@@ -8,4 +8,4 @@ jobs:
 install:
     - pip install -r requirements-dev.txt
 script:
-    - pytest
+    - pytest -k 'not windows'
