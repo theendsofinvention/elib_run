@@ -9,6 +9,7 @@ import pytest
 from elib_run import _find_exe
 
 
+@pytest.mark.windows
 @pytest.mark.filterwarnings('ignore::UserWarning')
 def test_find_executable():
     python = _find_exe.find_executable('python')
@@ -24,6 +25,7 @@ def test_context():
     assert _find_exe.find_executable('__sure__not__') == 'ok'
 
 
+@pytest.mark.windows
 @pytest.mark.filterwarnings('ignore::UserWarning')
 def test_paths():
     assert _find_exe.find_executable('python')

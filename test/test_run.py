@@ -114,6 +114,7 @@ def test_parse_cmd_exe_not_found():
 @pytest.mark.parametrize(
     'mute', (True, False)
 )
+@pytest.mark.windows
 def test_run(mute):
     expect(_run.RunContext).start_process()
     expect(_run).monitor_running_process(...)
